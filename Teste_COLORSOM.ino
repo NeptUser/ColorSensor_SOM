@@ -1,22 +1,101 @@
+/****************************************************************
+      CÓDIGO DE DESENVOLVIMENTO
+****************************************************************/
 #include "som.h"
-#include <stdlib.h> // Para gerar números aleatórios
 #include <Adafruit_NeoPixel.h>
 
-// Declarando neopixel
-
+// Sensor de cor
 Adafruit_NeoPixel led1(1, 6, NEO_GRB, + NEO_KHZ800);
+
+float avg_Red, avg_Blue, avg_Green, avg_White, avg_Bypass;
+
+int calculateMode(int arr[], int size) {
+  int maxValue = 0, maxCount = 0;
+
+  for (int i = 0; i < size; ++i) {
+    int count = 0;
+    
+    for (int j = 0; j < size; ++j) {
+      if (arr[j] == arr[i])
+        ++count;
+    }
+
+    if (count > maxCount) {
+      maxCount = count;
+      maxValue = arr[i];
+    }
+  }
+
+  return maxValue;
+}
+
+float normalizeLDR(int rawValue, int minValue, int maxValue) {
+  return (float)(rawValue - minValue) / (maxValue - minValue);
+}
+
+void getColor(){
+  if (millis() - time1 > 1000){
+    int values_Red[10], values_Green[10], values_Blue[10], values_White[10], values_Bypass[10];
+
+    // read channel R
+    led.setPixelColor(0, led.Color(255, 0, 0));
+    led.show();
+    for (int i = 0; i < 10; i++){
+      values_Red[i] = analogRead(PINLDR);
+      delay(10);
+    }
+    avg_Red = calculateMode(values_Red, 10);
+    avg_Red = normalizeLDR(avg_Red, 0, 1023); // Normalizing the value
+    delay(10);
+
+    // read channel G
+    led.setPixelColor(0, led.Color(0, 255, 0));
+    led.show();
+    for (int i = 0; i < 10; i++){
+      values_Green[i] = analogRead(PINLDR);
+      delay(10);
+    }
+    avg_Green = calculateMode(values_Green, 10);
+    avg_Green = normalizeLDR(avg_Green, 0, 1023); // Normalizing the value
+    delay(10);
+
+    // read channel B
+    led.setPixelColor(0, led.Color(0, 0, 255));
+    led.show();
+    for (int i = 0; i < 10; i++){
+      values_Blue[i] = analogRead(PINLDR);
+      delay(10);
+    }
+    avg_Blue = calculateMode(values_Blue, 10);
+    avg_Blue = normalizeLDR(avg_Blue, 0, 1023); // Normalizing the value
+    delay(10);
+
+    // read channel W
+    led.setPixelColor(0, led.Color(255, 255, 255));
+    led.show();
+    for (int i = 0; i < 10; i++){
+      values_White[i] = analogRead(PINLDR);
+      delay(10);
+    }
+    avg_White = calculateMode(values_White, 10);
+    avg_White = normalizeLDR(avg_White, 0, 1023); // Normalizing the value
+    delay(10);
+
+    // read channel Bypass
+    led.setPixelColor(0, led.Color(0, 0, 0));
+    led.show();
+    for (int i = 0; i < 10; i++){
+      values_Bypass[i] = analogRead(PINLDR);
+      delay(10);
+    }
+    avg_Bypass = calculateMode(values_Bypass, 10);
+    avg_Bypass = normalizeLDR(avg_Bypass, 0, 1023); // Normalizing the value
+  }
+}
 
 // Número de clusters e dimensões dos pesos
 #define NUM_CLUSTERS 10
 #define DIMENSIONS 3
-
-//função de leitura
-
-void getValue(){
-  led.setPixelColor(255, 0, 0);
-  led.show()
-  value =  LDR
-}
 
 // Matriz de pesos treinada fornecida
 float trainedWeights[NUM_CLUSTERS][DIMENSIONS] = {
@@ -31,7 +110,7 @@ float trainedWeights[NUM_CLUSTERS][DIMENSIONS] = {
     {1.628338077395458e-31, 1.0, 1.0},
     {0.56843759748957, 0.39042163291770016, 0.29641167077879027}
 };
-
+void getColor()
 // SOM instanciada
 SOM som(NUM_CLUSTERS, DIMENSIONS);
 
