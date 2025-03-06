@@ -20,22 +20,22 @@ L9110 motor(PIN_VEL_E, PIN_DIR_E, PIN_VEL_D, PIN_DIR_D);
 void setup() {
     Serial.begin(9600);
     colorSensor.begin();
-    redeSOM.setup(); // Configura a Rede SOM
+    redeSOM.setup();
     Serial.println("Sistema iniciado.");
 }
 
 void loop() {
-    int features[3]; // Vetor para armazenar características RGB
-    float featuresFloat[3]; // Vetor para armazenar as características em float
+    int features[3]; 
+    float featuresFloat[3];
     
-    colorSensor.readFeatures(features); // Obtém os valores RGB normalizados
+    colorSensor.readFeatures(features); 
 
-    // Converte e normaliza os valores de 'features' (int) para 'featuresFloat' (float)
+    
     for (int i = 0; i < 3; i++) {
-        featuresFloat[i] = features[i] / 1023.0; // Normaliza para o intervalo [0, 1]
+        featuresFloat[i] = features[i] / 1023.0; 
     }
 
-    char response = redeSOM.melhorResposta(featuresFloat); // Usa a Rede SOM para determinar a resposta
+    char response = redeSOM.melhorResposta(featuresFloat);
 
     Serial.print("Cor detectada: ");
     Serial.println(response);
@@ -46,7 +46,7 @@ void loop() {
     Serial.print(", ");
     Serial.println(featuresFloat[2]);
 
-    // Realiza ação com base na cor detectada
+    // Realiza ação com base na cor detectada [Essa parte foi feita com IA (Verificar)]
     if (response == 'R') { // Vermelho
         motor.frente(255, 0); // Velocidade máxima, movimento contínuo
     } else if (response == 'G') { // Verde
